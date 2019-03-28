@@ -475,8 +475,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             var infoBoxContainer = document.createElement('div');
             infoBoxContainer.className = 'cesium-viewer-infoBoxContainer';
             viewerContainer.appendChild(infoBoxContainer);
-            infoBox = new InfoBox(infoBoxContainer);
-
+            //infoBox = new InfoBox(infoBoxContainer);
+            infoBox = new InfoBox(infoBoxContainer, scene);
             var infoBoxViewModel = infoBox.viewModel;
             eventHelper.add(infoBoxViewModel.cameraClicked, Viewer.prototype._onInfoBoxCameraClicked, this);
             eventHelper.add(infoBoxViewModel.closeClicked, Viewer.prototype._onInfoBoxClockClicked, this);
@@ -1614,6 +1614,8 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             var state = this._dataSourceDisplay.getBoundingSphere(selectedEntity, true, boundingSphereScratch);
             if (state !== BoundingSphereState.FAILED) {
                 position = boundingSphereScratch.center;
+            } else if(defined(selectedEntity.selectedPosition)){
+                position = selectedEntity.selectedPosition.getValue(time, position);
             } else if (defined(selectedEntity.position)) {
                 position = selectedEntity.position.getValue(time, position);
             }
@@ -1632,10 +1634,12 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             infoBoxViewModel.showInfo = showSelection;
             infoBoxViewModel.enableCamera = enableCamera;
             infoBoxViewModel.isCameraTracking = (this.trackedEntity === this.selectedEntity);
+            infoBoxViewModel.position = Cartesian3.clone(position, infoBoxViewModel.position);
 
             if (showSelection) {
                 infoBoxViewModel.titleText = defaultValue(selectedEntity.name, selectedEntity.id);
                 infoBoxViewModel.description = Property.getValueOrDefault(selectedEntity.description, time, '');
+                infoBoxViewModel.update();
             } else {
                 infoBoxViewModel.titleText = '';
                 infoBoxViewModel.description = '';

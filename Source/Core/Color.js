@@ -411,6 +411,19 @@ define([
     };
 
     /**
+     * 将color转换为rgba字符串
+     * @param {Color} color
+     */
+    Color.toCssColorString = function (color) {
+        var red = Color.floatToByte(color.red);
+        var green = Color.floatToByte(color.green);
+        var blue = Color.floatToByte(color.blue);
+        if (color.alpha === 1) {
+            return 'rgb(' + red + ',' + green + ',' + blue + ')';
+        }
+        return 'rgba(' + red + ',' + green + ',' + blue + ',' + color.alpha || 1.0 + ')';
+    };
+    /**
      * The number of elements used to pack the object into an array.
      * @type {Number}
      */
