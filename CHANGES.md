@@ -3,8 +3,22 @@ Change Log
 
 ### 1.56 - 2019-04-01
 
+##### Breaking Changes :mega:
+* `Resource.fetchImage` now returns an `ImageBitmap` instead of `Image` when supported. This allows for decoding images while fetching using `createImageBitmap` to greatly speed up texture upload and decrease frame drops when loading models with large textures. [#7579](https://github.com/AnalyticalGraphicsInc/cesium/pull/7579)
+
+##### Deprecated :hourglass_flowing_sand:
+* `Resource.fetchImage` now takes an options object. Use `resource.fetchImage({ preferBlob: true })` instead of `resource.fetchImage(true)`. The previous function definition will no longer work in 1.57. [#7579](https://github.com/AnalyticalGraphicsInc/cesium/pull/7579)
+
+##### Additions :tada:
+* `Resource.fetchImage` now has a `flipY` option to vertically flip an image during fetch & decode. It is only valid when `ImageBitmapOptions` is supported by the browser. [#7579](https://github.com/AnalyticalGraphicsInc/cesium/pull/7579)
+* Added `backFaceCulling` and `normalShading` options to `PointCloudShading`. Both options are only applicable for point clouds containing normals. [#7399](https://github.com/AnalyticalGraphicsInc/cesium/pull/7399)
+* Added support for touch and hold gesture. The touch and hold delay can be customized by updating `ScreenSpaceEventHandler.touchHoldDelayMilliseconds`. [#7286](https://github.com/AnalyticalGraphicsInc/cesium/pull/7286)
+
 ##### Fixes :wrench:
 * Fixed the value for `BlendFunction.ONE_MINUS_CONSTANT_COLOR`. [#7624](https://github.com/AnalyticalGraphicsInc/cesium/pull/7624)
+* Fixed `HeadingPitchRoll.pitch` being `NaN` when using `.fromQuaternion` do to a rounding error
+for pitches close to +/- 90°. [#7654](https://github.com/AnalyticalGraphicsInc/cesium/pull/7654)
+* Fixed an error in `Resource` when used with template replacements using numeric keys. [#7668](https://github.com/AnalyticalGraphicsInc/cesium/pull/7668)
 
 ### 1.55 - 2019-03-01
 
