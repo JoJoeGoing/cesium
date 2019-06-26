@@ -47,7 +47,8 @@ define([
         '../SelectionIndicator/SelectionIndicator',
         '../subscribeAndEvaluate',
         '../Timeline/Timeline',
-        '../VRButton/VRButton'
+        '../VRButton/VRButton',
+        '../../Widgets/Drawing/LayersButton'
     ], function(
         BoundingSphere,
         Cartesian3,
@@ -97,7 +98,8 @@ define([
         SelectionIndicator,
         subscribeAndEvaluate,
         Timeline,
-        VRButton) {
+        VRButton,
+        LayersButton) {
     'use strict';
 
     var boundingSphereScratch = new BoundingSphere();
@@ -360,7 +362,6 @@ define([
             throw new DeveloperError('container is required.');
         }
         //>>includeEnd('debug');
-
         container = getElement(container);
         options = defaultValue(options, defaultValue.EMPTY_OBJECT);
 
@@ -761,6 +762,9 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
 
         cesiumWidget.screenSpaceEventHandler.setInputAction(pickAndSelectObject, ScreenSpaceEventType.LEFT_CLICK);
         cesiumWidget.screenSpaceEventHandler.setInputAction(pickAndTrackObject, ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+        this.layersButton = new LayersButton(this);
+
     }
 
     defineProperties(Viewer.prototype, {
