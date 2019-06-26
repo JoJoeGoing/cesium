@@ -78,7 +78,7 @@ define(['../../Core/createGuid',
         this._scale = defaultValue(options.scale, 1);
         this._labelFillColor = defaultValue(options.labelFillColor, Color.WHITE);
         this._labelOutlineWidth = defaultValue(options.labelOutlineWidth, 1);
-        this._labelBackgroundColor = Color.fromCssColorString(defaultValue(options.labelBackgroundColor, '#000080'));
+        this._labelBackgroundColor = defaultValue(options.labelFillColor, Color.TRANSPARENT);
         this._lableShowBackground = defaultValue(options.labelShowBackground, true);
         this._padding = defaultValue(options.padding, 1);
         this._font = defaultValue(options.font, 'Bold 14px Microsoft YaHei');

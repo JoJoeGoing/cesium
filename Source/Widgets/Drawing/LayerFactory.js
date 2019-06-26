@@ -183,9 +183,6 @@ define([
         }
     };
 
-
-
-
     /**
      *
      * @param options
@@ -231,7 +228,7 @@ define([
      */
     LayerFactory.createTiles = function (url) {
         return new Cesium3DTileset({
-            url: url,
+            url: url
             // maximumScreenSpaceError: 1.3,
             // baseScreenSpaceError: 128,
             // skipScreenSpaceErrorFactor: 1,
@@ -540,7 +537,7 @@ define([
             dataSource = null;
 
         }).otherwise(function(error) {
-            console.error('Õº≤„ polygon º”‘ÿ ß∞‹ £∫ ' + error)
+            console.error('Õº≤„ polygon º”‘ÿ ß∞‹ £∫ ' + error);
         });
         data = null;
     };
@@ -560,7 +557,7 @@ define([
     LayerFactory.prototype._loadOsgb2 = function (options) {
 
         var tile = new Cesium3DTileset({
-            url: options.url,
+            url: options.url
         });
 
         this.tile = this.layersButton.addLayer(this.name, tile, true, false);

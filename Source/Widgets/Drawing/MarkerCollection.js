@@ -111,23 +111,23 @@ define(['../../ThirdParty/when',
             return primitive;
         };
 
-        // MarkerCollection.prototype.addWithHeight = function(lon, lat, height, name, data, options) {
-        //     options = options || {};
-        //     options.lon = lon;
-        //     options.lat = lat;
-        //     options.height = height;
-        //     options.name = name;
-        //     options.heightReference = HeightReference.NONE;
-        //     //options.data = data;
-        //
-        //     var primitive = new MarkerPrimitive(options, this);
-        //     primitive.owner = this.owner;
-        //     this._markers.push(primitive);
-        //     if (defined(options.data) && defined(options.data.id)) {
-        //         this._dataId = options.data.id;
-        //     }
-        //     return primitive;
-        // };
+        MarkerCollection.prototype.addWithHeight = function(lon, lat, height, name, data, options) {
+            options = options || {};
+            options.lon = lon;
+            options.lat = lat;
+            options.height = height;
+            options.name = name;
+            options.heightReference = HeightReference.NONE;
+            options.data = data;
+
+            var primitive = new MarkerPrimitive(options, this);
+            primitive.owner = this.owner;
+            this._markers.push(primitive);
+            if (defined(options.data) && defined(options.data.id)) {
+                this._dataId = options.data.id;
+            }
+            return primitive;
+        };
 
         /**
          * @method 移除指定marker点
