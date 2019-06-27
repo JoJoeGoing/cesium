@@ -61,7 +61,7 @@ define(['../../Core/defined',
              DrawingTypes, DrawingEvent, ChangeablePrimitive,
              ExtentPrimitive, CirclePrimitive, PolylinePrimitive,
              PolygonPrimitive, MarkerPrimitive, MarkerCollection,
-             PolygonArea, ModelPrimitive, ModelCollection, pickGlobe) {
+             polygonArea, ModelPrimitive, ModelCollection, pickGlobe) {
         'use strict';
         var screenPosition = new Cartesian2;
         var ellipsoid = Ellipsoid.WGS84;
@@ -1335,6 +1335,7 @@ define(['../../Core/defined',
             var scene = this._scene;
             var primitive = this._drawPrimitives;
             var tooltip = this._tooltip;
+            var altitude = options.altitude ||0;
             var polyLine = new PolylinePrimitive(options);
             polyLine.heightReference = HeightReference.NONE;
             polyLine.asynchronous = false;
@@ -1355,7 +1356,7 @@ define(['../../Core/defined',
                 if (null !== movement.position) {
                     if (0 === points.length) {
                         // position = scene.camera.pickEllipsoid(movement.position, ellipsoid);
-                        position = pickGlobe(scene, movement.position, options.altitude);
+                        position = pickGlobe(scene, movement.position, altitude);
                         if (position !== null) {
                             if (defined(scene)) {
                                 scene.refreshAlways = true;
@@ -1374,19 +1375,18 @@ define(['../../Core/defined',
                         }
                     } else {
                         self.stopDrawing();
-                        position = pickGlobe(scene, movement.position, options.altitude);
+                        position = pickGlobe(scene, movement.position, altitude);
                         // position = scene.camera.pickEllipsoid(movement.position, ellipsoid);
 
                         if (!defined(position)) {
                             return;
                         }
                         var cartographic = ellipsoid.cartesianToCartographic(position);
-                        EllipsoidGeodesic = ellipsoid.cartesianToCartographic(position);
-                        ScreenSpaceEventHandler = cartographic.height - EllipsoidGeodesic.height;
+                        var height = cartographic.height - altitude;
                         self._dispatchOverlayComplete(null, null, {
                             target : this
                         }, {
-                            height : ScreenSpaceEventHandler
+                            height : height
                         });
                     }
                 }
@@ -1398,7 +1398,7 @@ define(['../../Core/defined',
                     if (0 === points.length) {
                         tooltip.showAt('高度为: 0米');
                     } else {
-                        var d = pickGlobe(scene, o, options.altitude);
+                        var d = pickGlobe(scene, o, altitude);
                         //var d = scene.camera.pickEllipsoid(movement.position, ellipsoid);
 
                         if (!defined(d)) {
@@ -2006,7 +2006,7 @@ define(['../../Core/defined',
                                 tooltip.showAt(position, baseHtml + distanceHtml + (cartesianPositions.length > minPoints ? ',双击结束' : ''));
                             } else if (self._drawingMode === DrawingTypes.DRAWING_AREA) {
                                 var cartographicPositions = ellipsoid.cartesianArrayToCartographicArray(cartesianPositions);
-                                var area = new PolygonArea(cartographicPositions);
+                                var area =  polygonArea(cartographicPositions);
                                 var areaHtml = getAreaText(area);
                                 tooltip.showAt(position, baseHtml + areaHtml + (cartesianPositions.length > minPoints ? ',双击结束' : ''));
                             } else if (self._showTooltip) {
@@ -2051,7 +2051,7 @@ define(['../../Core/defined',
                             });
                         } else if (self._drawingMode === DrawingTypes.DRAWING_AREA) {
                             var cartographicArray = ellipsoid.cartesianArrayToCartographicArray(cartesianPositions);
-                            var area = new PolygonArea(cartographicArray);
+                            var area =  polygonArea(cartographicArray);
                             self._dispatchOverlayComplete(poly, ellipsoid.cartesianArrayToCartographicArray(cartesianPositions), {
                                 target : this
                             }, {

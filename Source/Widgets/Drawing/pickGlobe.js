@@ -14,17 +14,21 @@ define(['../../Core/defined',
 
     /**
      *
-     * @param CesiumScene
+     * @param scene
      * @param windowPosition
      * @param aboveHeight 最终高度
      * @returns {*}
      */
-    function pickGlobe(CesiumScene, windowPosition, aboveHeight) {
-        if(!defined(CesiumScene)){
+    function pickGlobe(scene, windowPosition, aboveHeight) {
+        if(!defined(scene)){
             return;
         }
-        var globe = CesiumScene.globe;
-        var camera = CesiumScene.camera;
+        var globe = scene.globe;
+        var camera = scene.camera;
+        if (scene.pickPositionSupported) {
+         return scene.pickPosition(windowPosition);
+            //return camera.pickEllipsoid(windowPosition);
+        }
         var ray = camera.getPickRay(windowPosition);
 
         if(aboveHeight > 0){
@@ -37,7 +41,7 @@ define(['../../Core/defined',
             }
         }
         if (defined(ray)) {
-            return globe.pick(ray,CesiumScene);
+            return globe.pick(ray,scene);
         }
         return camera.pickEllipsoid(windowPosition);
     }
