@@ -29,24 +29,31 @@
     <script id="cesium_sandcastle_script">
         function startup(Cesium) {
             'use strict';
-            var url = 'http://localhost:8081/tiles/global_seven_1_7/{z}/{x}/{y}.jpg'
             var hami = new Cesium.UrlTemplateImageryProvider({
-                url: url,
-                tilingScheme: new Cesium.GeographicTilingScheme({
-                    numberOfLevelZeroTilesX: 2,
-                    numberOfLevelZeroTilesY: 1
-                }),
-                minimumLevel: 3,
+                url: 'http://192.168.28.193:8095/mapSP/data/dom/hami/{z}/{x}/{y}.png',
+                //tilingScheme: new Cesium.GeographicTilingScheme(),
+                minimumLevel: 8,
                 maximumLevel: 15,
                 enablePickFeatures: false
             });
-            // var base = Cesium.createTileMapServiceImageryProvider({
-            //     url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII')
-            // });
-            var viewer = new Cesium.Viewer('cesiumContainer', {
-                imageryProvider: hami,
-                baseLayerPicker: false,
 
+            var base = new Cesium.UrlTemplateImageryProvider({
+                url: 'http://192.168.28.193:8095/mapSP/data/dom/global/{z}/{x}/{y}.jpg',
+                tilingScheme: new Cesium.GeographicTilingScheme(),
+                maximumLevel: 8,
+                enablePickFeatures: false
+            });
+
+            var road = new Cesium.UrlTemplateImageryProvider({
+                url: 'http://192.168.28.193:8095/mapSP/data/road/{z}/{x}/{y}.png',
+                tilingScheme: new Cesium.GeographicTilingScheme(),
+                maximumLevel: 15,
+                enablePickFeatures: false
+            });
+
+            var viewer = new Cesium.Viewer('cesiumContainer', {
+                imageryProvider: base,
+                baseLayerPicker: false,
                 timeline: false,
                 homeButton: false,
                 geocoder: false,
@@ -57,7 +64,9 @@
                 selectionIndicator: false,
                 animation: true
             });
-           // viewer.imageryLayers.addImageryProvider(hami);
+            viewer.imageryLayers.addImageryProvider(hami);
+            viewer.imageryLayers.addImageryProvider(road);
+
         }
         if (typeof Cesium !== 'undefined') {
             startup(Cesium);
