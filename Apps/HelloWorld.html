@@ -36,47 +36,94 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-           var hami = new Cesium.UrlTemplateImageryProvider({
-                url: 'http://192.168.28.193:8095/mapSP/data/dom/hami/{z}/{x}/{y}.png',
-                tilingScheme: new Cesium.GeographicTilingScheme(),
-                //minimumLevel: 8,
-                maximumLevel: 15,
-                enablePickFeatures: false
-            });
+        var hami = new Cesium.CustormImageryProvider({
+            url: 'http://192.168.28.193:8095/mapSP/data/dom/hami/{z}/{x}/{y}.png',
+            tilingScheme: new Cesium.GeographicTilingScheme(),
+            //minimumLevel: 8,
+            maximumLevel: 15,
+            enablePickFeatures: false
+        });
+        this.baseImageProvider_ = new Cesium.UrlTemplateImageryProvider({
+            url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII/') + '{z}/{x}/{reverseY}.jpg',
+            tilingScheme: new Cesium.GeographicTilingScheme(),
+            maximumLevel: 2
+        });
+        var base = new Cesium.CustormImageryProvider({
+            url: 'http://192.168.28.193:8095/mapSP/data/dom/global/{z}/{x}/{y}.jpg',
+            tilingScheme: new Cesium.GeographicTilingScheme(),
+            maximumLevel: 8,
+            enablePickFeatures: false
+        });
 
-            var base = new Cesium.UrlTemplateImageryProvider({
-                url: 'http://192.168.28.193:8095/mapSP/data/dom/global/{z}/{x}/{y}.jpg',
-                tilingScheme: new Cesium.GeographicTilingScheme(),
-                maximumLevel: 8,
-                enablePickFeatures: false
-            });
+        var road = new Cesium.CustormImageryProvider({
+            url: 'http://192.168.28.193:8095/mapSP/data/road/{z}/{x}/{y}.png',
+            tilingScheme: new Cesium.GeographicTilingScheme(),
+            maximumLevel: 15,
+            enablePickFeatures: false
+        });
+        var terrain = new Cesium.CesiumTerrainProvider({
+            url: 'http://192.168.28.193:8095/mapSP/data/3d/dem/'
+        })
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            imageryProvider: baseImageProvider_,
+            baseLayerPicker: false,
+            timeline: false,
+            homeButton: false,
+            geocoder: false,
+            navigationHelpButton: false,
+            fullscreenButton: false,
+            scene3DOnly: true,
+            infoBox: true,
+            selectionIndicator: false,
+            animation: false,
+            //shadows:true
+        });
+        viewer.imageryLayers.addImageryProvider(hami);
+        viewer.imageryLayers.addImageryProvider(road);
 
-            var road = new Cesium.UrlTemplateImageryProvider({
-                url: 'http://192.168.28.193:8095/mapSP/data/road/{z}/{x}/{y}.png',
-                tilingScheme: new Cesium.GeographicTilingScheme(),
-                maximumLevel: 15,
-                enablePickFeatures: false
-            });
-            var terrain = new Cesium.CesiumTerrainProvider({
-                url:'http://192.168.28.193:8095/mapSP/data/3d/dem/'
-            })
-            var viewer = new Cesium.Viewer('cesiumContainer', {
-                imageryProvider: base,
-                baseLayerPicker: false,
-                timeline: false,
-                homeButton: false,
-                geocoder: false,
-                navigationHelpButton: false,
-                fullscreenButton: false,
-                scene3DOnly: true,
-                infoBox: true,
-                selectionIndicator: false,
-                animation: true
-            });
-            viewer.imageryLayers.addImageryProvider(hami);
-            viewer.imageryLayers.addImageryProvider(road);
 
-            viewer.terrainProvider = terrain;
+
+        var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+            url: 'http://192.168.28.193:8095/mapSP/data/3d/osgb/8/tileset.json',
+            skipLevelOfDetail: true,
+            baseScreenSpaceError: 1024,
+            skipScreenSpaceErrorFactor: 16,
+            skipLevels: 1,
+            immediatelyLoadDesiredLevelOfDetail: false,
+            loadSiblings: false,
+            cullWithChildrenBounds: true
+        }));
+        //viewer.flyTo(tileset);
+        tileset.readyPromise.then(function(tileset) {
+
+            // //如果tileset自带世界矩阵矩阵，那么计算放置的经纬度和heading
+            var mat1 = Cesium.Matrix4.fromArray(tileset._root.transform);
+            var pos = Cesium.Matrix4.getTranslation(mat1, new Cesium.Cartesian3());
+            var wpos = Cesium.Cartographic.fromCartesian(pos);
+            var longitude = Cesium.Math.toDegrees(wpos.longitude);
+            var latitude = Cesium.Math.toDegrees(wpos.latitude);
+            var height = wpos.height;
+            var heading = 0;
+
+            var position = Cesium.Cartesian3.fromDegrees(longitude, latitude, height);
+            var mat = Cesium.Transforms.eastNorthUpToFixedFrame(position);
+
+            var rotationX = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationZ(Cesium.Math
+                .toRadians(heading)));
+            Cesium.Matrix4.multiply(mat, rotationX, mat);
+            tileset._root.transform = mat;
+            // viewer.camera.flyTo({
+            //     destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, height + 1000)
+            // });
+            viewer.flyTo(tileset);
+            setTimeout(function() {
+                viewer.terrainProvider = terrain;
+
+                viewer.scene.globe.depthTestAgainstTerrain = true;
+            }, 10000)
+        })
+
+
 
         // var viewer = new Cesium.Viewer('cesiumContainer', {
         //     baseLayerPicker: false,
