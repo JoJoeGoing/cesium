@@ -56,6 +56,7 @@ define(['../../Core/createGuid',
      * @param [options.color]
      * @param [options.scale]
      * @param [options.labelFillColor]
+     * @param [options.labelBackgroundColor]
      * @param [options.labelOutlineWidth]
      * @param [options.labelShowBackground]
      * @param [options.padding]
@@ -78,7 +79,7 @@ define(['../../Core/createGuid',
         this._scale = defaultValue(options.scale, 1);
         this._labelFillColor = defaultValue(options.labelFillColor, Color.WHITE);
         this._labelOutlineWidth = defaultValue(options.labelOutlineWidth, 1);
-        this._labelBackgroundColor = defaultValue(options.labelFillColor, Color.TRANSPARENT);
+        this._labelBackgroundColor = defaultValue(options.labelBackgroundColor, Color.TRANSPARENT);
         this._lableShowBackground = defaultValue(options.labelShowBackground, true);
         this._padding = defaultValue(options.padding, 1);
         this._font = defaultValue(options.font, 'Bold 14px Microsoft YaHei');
