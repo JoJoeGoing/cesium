@@ -727,8 +727,6 @@ define([
     function buildImageResource(imageryProvider, x, y, level, request) {
         degreesScratchComputed = false;
         projectedScratchComputed = false;
-        //todo:解決bigmap下载器下载的地图层级错位的bug
-        level += 1;
         var resource = imageryProvider._resource;
         var url = resource.getUrlComponent(true);
         var allTags = imageryProvider._tags;
